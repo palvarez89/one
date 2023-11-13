@@ -228,6 +228,12 @@ func (ic *ImageController) RenameContext(ctx context.Context, newName string) er
 	return err
 }
 
+// CreateContext will create a snapshot from the image
+func (ic *ImageSnapshotController) CreateContext(ctx context.Context) error {
+	_, err := ic.c.Client.CallContext(ctx, "one.image.snapshotcreate", ic.entityID, ic.ID)
+	return err
+}
+
 // Delete will delete a snapshot from the image
 func (ic *ImageSnapshotController) Delete() error {
 	return ic.DeleteContext(context.Background())
