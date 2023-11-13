@@ -522,6 +522,90 @@ Request::ErrorCode ImageClone::request_execute(
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+void ImageSnapshotCreate::request_execute(xmlrpc_c::paramList const& paramList,
+                                  RequestAttributes& att)
+//Request::ErrorCode VirtualMachineSnapshotCreate::request_execute(RequestAttributes& att,
+//                                                                 int vid,
+//                                                                 string& name)
+{
+    PoolObjectAuth   vm_perms;
+
+    int     rc;
+    int     snap_id;
+
+    VectorAttribute* snap = nullptr;
+
+    // -------------------------------------------------------------------------
+    // Authorize the operation
+    // -------------------------------------------------------------------------
+    auto auth = vm_authorization_no_response(vid, 0, 0, att, 0, 0, 0);
+
+    if (auth != SUCCESS)
+    {
+        return auth;
+    }
+
+    // Check if the action is supported for imported VMs
+    if (auto vm = pool->get_ro<VirtualMachine>(vid))
+    {
+        if (vm->is_imported() &&
+            !vm->is_imported_action_supported(VMActions::SNAPSHOT_CREATE_ACTION))
+        {
+            att.resp_msg = "Action \"snapshot-create\" is not supported for "
+                "imported VMs";
+
+            return ACTION;
+        }
+
+        auto vm_bck = vm->backups();
+
+        if ( vm_bck.configured() && vm_bck.mode() == Backups::INCREMENT )
+        {
+            att.resp_msg = "Action \"snapshot-create\" is not compatible with "
+                "incremental backups";
+
+            return ACTION;
+        }
+
+        // get quota deltas
+        snap = vm->new_snapshot(name, snap_id);
+        snap = snap->clone();
+
+        vm->get_permissions(vm_perms);
+    }
+    else
+    {
+        att.resp_id = vid;
+        return NO_EXISTS;
+    }
+
+    Template quota_tmpl;
+
+    quota_tmpl.set(snap);
+    quota_tmpl.add("MEMORY", 0);
+    quota_tmpl.add("CPU", 0);
+    quota_tmpl.add("VMS", 0);
+
+    RequestAttributes att_quota(vm_perms.uid, vm_perms.gid, att);
+
+    if ( !quota_authorization(&quota_tmpl, Quotas::VM, att_quota, att.resp_msg) )
+    {
+        // todo Double check the return code, should we copy vm_perms.uid and vm_perms.gid to response
+        return AUTHORIZATION;
+    }
+
+    rc = dm->snapshot_create(vid, name, snap_id, att, att.resp_msg);
+
+    if ( rc != 0 )
+    {
+        quota_rollback(&quota_tmpl, Quotas::VM, att_quota);
+        return ACTION;
+    }
+
+    att.resp_id = snap_id;
+    return SUCCESS;
+}
+
 void ImageSnapshotDelete::request_execute(xmlrpc_c::paramList const& paramList,
                                   RequestAttributes& att)
 {

@@ -486,6 +486,7 @@ void RequestManager::register_xml_methods()
     xmlrpc_c::methodPtr image_enable(new ImageEnable());
     xmlrpc_c::methodPtr image_chtype(new ImageChangeType());
     xmlrpc_c::methodPtr image_clone(new ImageClone());
+    xmlrpc_c::methodPtr image_snap_create(new ImageSnapshotCreate());
     xmlrpc_c::methodPtr image_snap_delete(new ImageSnapshotDelete());
     xmlrpc_c::methodPtr image_snap_revert(new ImageSnapshotRevert());
     xmlrpc_c::methodPtr image_snap_flatten(new ImageSnapshotFlatten());
@@ -826,6 +827,7 @@ void RequestManager::register_xml_methods()
     RequestManagerRegistry.addMethod("one.image.chtype", image_chtype);
     RequestManagerRegistry.addMethod("one.image.clone", image_clone);
     RequestManagerRegistry.addMethod("one.image.rename", image_rename);
+    RequestManagerRegistry.addMethod("one.image.snapshotcreate", image_snap_create);
     RequestManagerRegistry.addMethod("one.image.snapshotdelete", image_snap_delete);
     RequestManagerRegistry.addMethod("one.image.snapshotrevert", image_snap_revert);
     RequestManagerRegistry.addMethod("one.image.snapshotflatten", image_snap_flatten);
