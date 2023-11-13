@@ -177,6 +177,25 @@ protected:
                          RequestAttributes& att) override;
 };
 
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+class ImageSnapshotCreate : public RequestManagerImage
+{
+public:
+    ImageSnapshotCreate():
+        RequestManagerImage("one.image.snapshotcreate",
+                "Creates a snapshot from image", "A:sii"){};
+
+    ~ImageSnapshotCreate(){};
+
+protected:
+
+    void request_execute(xmlrpc_c::paramList const& _paramList,
+                         RequestAttributes& att) override;
+};
+
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
