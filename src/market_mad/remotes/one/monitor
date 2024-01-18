@@ -81,7 +81,7 @@ class OneMarket
         print_var(tmpl64, 'TYPE', file['type'])
 
         if !tmpl64.empty?
-            print_var(tmpl, 'APPTEMPLATE64', Base64.strict_encode64(tmpl64))
+            print_var(tmpl, 'APPTEMPLATE64', tmpl64)
         end
 
         ot = app['opennebula_template']
@@ -90,7 +90,7 @@ class OneMarket
 
         begin
             print_var(tmpl, 'VMTEMPLATE64',
-                      Base64.strict_encode64(template_to_str(JSON.parse(ot))))
+                      template_to_str(JSON.parse(ot)))
         rescue StandardError
             nil
         end
@@ -114,7 +114,7 @@ class OneMarket
 
         begin
             print_var(tmpl, 'APPTEMPLATE64',
-                      Base64.strict_encode64(template_to_str(JSON.parse(ot))))
+                      template_to_str(JSON.parse(ot)))
         rescue StandardError
             nil
         end
@@ -136,7 +136,7 @@ class OneMarket
         return if ot.nil? || ot.empty?
 
         begin
-            print_var(tmpl, 'APPTEMPLATE64', Base64.strict_encode64(ot))
+            print_var(tmpl, 'APPTEMPLATE64', ot)
         rescue StandardError
             nil
         end
@@ -191,7 +191,7 @@ class OneMarket
                 next
             end
 
-            appstr << "APP=\"#{Base64.strict_encode64(tmpl)}\"\n"
+            appstr << "APP=\"#{tmpl}\"\n"
         end
 
         appstr
