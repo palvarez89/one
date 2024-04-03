@@ -144,7 +144,7 @@ class OneMarket
     end
 
     def fetch_appliances
-        rc, body = get('palvarez89/c908436d7c9b8d067645bce0cf61e1bf/raw/9aefe4e10ce105077572b49e639fc8b4e706ca91/mkplz-chris.json') #'/appliance')
+        rc, body = get('palvarez89/51b4ac50b20a105acfb5b3ca64423975/raw/2593ed09295b8aabbe9b7c1c9cc130b638321e05/multiple-disks.json') #'/appliance'
         if rc != 0
             return rc, body
         end
